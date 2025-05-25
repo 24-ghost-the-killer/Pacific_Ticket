@@ -1,0 +1,12 @@
+Create Ticket Panel - File Created:
+
+Add to ticket - File Created:
+Remove from ticket - File Created:
+
+Claim Ticket - File Created:
+Unclaim Ticket - File Created:
+
+Create Ticket - File Created:
+Close Ticket - File Created:
+Rename Ticket - File Created:
+Switch Ticket Category - File Created: 

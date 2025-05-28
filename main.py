@@ -2,8 +2,9 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 import os
-from src.database.database import Database
+from src.database.main import Database
 from src.commands.commands import Commands
+from src.events.main import Events
 
 load_dotenv()
 
@@ -24,6 +25,7 @@ async def on_ready():
     except Exception as e:
         print(f'Failed to connect to MySQL: {e}')
     await Commands.load(bot)
+    await Events.view(bot)
     await bot.tree.sync()
 
 if __name__ == "__main__":

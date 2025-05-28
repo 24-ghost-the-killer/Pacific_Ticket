@@ -1,17 +1,8 @@
-import discord
 from discord.ext import commands
 import os
 import importlib
 import asyncio
-
 class Commands(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-
-    @commands.Cog.listener()
-    async def on_ready(self):
-        print(f'Commands cog loaded for {self.bot.user.name}')
-
     @staticmethod
     async def load(bot):
         ticket_dir = os.path.join(os.path.dirname(__file__), 'ticket')

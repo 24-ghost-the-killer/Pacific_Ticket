@@ -49,6 +49,28 @@ class TicketDatabase():
             return None
     
     @staticmethod
+    def update(data={
+        'channel_id': None,
+        'claimed': None,
+        'claimed_by': None
+    }):
+        try:
+            with Database.connect() as conn:
+                with conn.cursor(dictionary=True) as cursor:
+                    cursor.execute(
+                        "UPDATE tickets SET claimed = %s, claimed_by = %s WHERE channel_id = %s",
+                        (
+                            data['claimed'],
+                            data['claimed_by'],
+                            data['channel_id']
+                        )
+                    )
+                    conn.commit()
+        except Exception as e:
+            print(f"Error in TicketDatabase.update: {e}")
+            return None
+
+    @staticmethod
     def categorys():
         try:
             with Database.connect() as conn:

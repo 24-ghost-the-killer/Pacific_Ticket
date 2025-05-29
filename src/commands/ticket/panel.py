@@ -1,19 +1,22 @@
 import discord
 from discord.ext import commands
+from src.utils.permissions import Permission
 from src.utils.ticket.dropdown import TicketDropdown
-
-async def setup(bot):
-    persistent_view = discord.ui.View(timeout=None)
-    persistent_view.add_item(TicketDropdown())
-    bot.add_view(persistent_view)
-    await bot.add_cog(Panel(bot))
-
+from src.database.main import Database
 class Panel(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @discord.app_commands.command(name="panel", description="Create a new ticket panel")
     async def panel(self, interaction: discord.Interaction):
+        access = Permission(interaction.user, Database.setting('panel_role')).check()
+        if not access:
+            await interaction.response.send_message(
+                "Du har ikke tilladelse til at bruge denne kommando.",
+                ephemeral=True
+            )
+            return
+
         embed = discord.Embed(
             title="RadientRP - Ticket System",
             description=(

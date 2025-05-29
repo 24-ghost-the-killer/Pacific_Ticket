@@ -47,14 +47,15 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `name` varchar(50) DEFAULT NULL,
   `value` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Dumping data for table s87_Radient.settings: ~4 rows (approximately)
+-- Dumping data for table s87_Radient.settings: ~5 rows (approximately)
 REPLACE INTO `settings` (`id`, `name`, `value`) VALUES
 	(1, 'support_role', '1376312327514619995'),
 	(2, 'call_role', '1377057764475666615'),
 	(3, 'call_support', 'true'),
-	(4, 'close_time', '5');
+	(4, 'close_time', '5'),
+	(5, 'panel_role', '1376311994147147846');
 
 -- Dumping structure for table s87_Radient.tickets
 CREATE TABLE IF NOT EXISTS `tickets` (
@@ -66,21 +67,15 @@ CREATE TABLE IF NOT EXISTS `tickets` (
   `category` varchar(50) DEFAULT NULL,
   `transcript` longtext NOT NULL DEFAULT '[]',
   `claimed` int(11) DEFAULT 0,
+  `claimed_by` varchar(50) DEFAULT '',
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Dumping data for table s87_Radient.tickets: ~4 rows (approximately)
-REPLACE INTO `tickets` (`id`, `channel_name`, `channel_id`, `owner_username`, `owner_id`, `category`, `transcript`, `claimed`, `created_at`) VALUES
-	(50, 'ticket-fred899h', '1377074164883787876', 'fred899h', '546949876072579093', 'support', '[]', 0, '2025-05-28 00:01:06'),
-	(51, 'ticket-fred899h', '1377074371654586411', 'fred899h', '546949876072579093', 'support', '[]', 0, '2025-05-28 00:01:55'),
-	(52, 'ticket-ghost_the_killer24', '1377080128139558935', 'ghost_the_killer24', '676685347542925352', 'support', '[]', 0, '2025-05-28 00:24:48'),
-	(53, 'ticket-ghost_the_killer24', '1377081830842302587', 'ghost_the_killer24', '676685347542925352', 'support', '[]', 0, '2025-05-28 00:31:34'),
-	(54, 'ticket-ghost_the_killer24', '1377083535835271199', 'ghost_the_killer24', '676685347542925352', 'support', '[]', 0, '2025-05-28 00:38:20'),
-	(55, 'ticket-ghost_the_killer24', '1377083788042965136', 'ghost_the_killer24', '676685347542925352', 'support', '[]', 0, '2025-05-28 00:39:20'),
-	(56, 'ticket-ghost_the_killer24', '1377084431613034576', 'ghost_the_killer24', '676685347542925352', 'support', '[]', 0, '2025-05-28 00:41:53'),
-	(57, 'ticket-ghost_the_killer24', '1377084447186489387', 'ghost_the_killer24', '676685347542925352', 'bande', '[]', 0, '2025-05-28 00:41:57'),
-	(58, 'ticket-ghost_the_killer24', '1377084586898620527', 'ghost_the_killer24', '676685347542925352', 'support', '[]', 0, '2025-05-28 00:42:31');
+-- Dumping data for table s87_Radient.tickets: ~2 rows (approximately)
+REPLACE INTO `tickets` (`id`, `channel_name`, `channel_id`, `owner_username`, `owner_id`, `category`, `transcript`, `claimed`, `claimed_by`, `created_at`) VALUES
+	(1, 'ticket-ghost_the_killer24', '1377394950479548498', 'ghost_the_killer24', '676685347542925352', 'support', '[]', 0, NULL, '2025-05-28 21:15:47'),
+	(2, 'ticket-officalsenior', '1377408345316655155', 'offical.senior', '793058463272927234', 'politi', '[]', 0, '', '2025-05-28 22:09:01');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

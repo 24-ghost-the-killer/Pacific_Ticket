@@ -1,7 +1,7 @@
 import discord
-from src.database.main import Database
+from src.database.main import Database as MainDatabase
 from src.utils.ticket.close import TicketCloseModel
-
+from src.utils.ticket.database import TicketDatabase as Database
 class TicketClose(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
@@ -11,7 +11,7 @@ class TicketClose(discord.ui.View):
     def _load_settings(self, guild):
         if self._support_role_id is None:
             try:
-                self._support_role_id = int(Database.setting('support_role'))
+                self._support_role_id = int(MainDatabase.setting('support_role'))
             except Exception:
                 self._support_role_id = None
         if self._support_role_id:
@@ -40,7 +40,19 @@ class TicketClose(discord.ui.View):
                 ephemeral=True
             )
             return
-        # Åbn modal for at indsamle lukningsårsag
+
+        ticket = Database().get({
+            'channel_id': str(interaction.channel.id)
+        })
+    
+
+        if not ticket:
+            await interaction.response.send_message(
+                "Denne ticket findes ikke i databasen. Kontakt venligst en administrator.",
+                ephemeral=True
+            )
+            return
+    
         await interaction.response.send_modal(TicketCloseModel())
 
 

@@ -1,18 +1,52 @@
 import discord
 from src.utils.ticket.database import TicketDatabase as Database
 from src.events.ticket.unclaim import TicketUnclaim as Unclaim
+from src.database.main import Database as MainDatabase
 class TicketClaim(discord.ui.View):
     _category_cache = None
 
     def __init__(self):
         super().__init__(timeout=None)
+        self._support_role_id = None
+        self._support_role = None
         if TicketClaim._category_cache is None:
             categories = Database().categorys() or []
             TicketClaim._category_cache = {str(cat['value']): cat for cat in categories}
             TicketClaim._category_cache.update({cat['value']: cat for cat in categories})
 
+    def _load_settings(self, guild):
+        if self._support_role_id is None:
+            try:
+                self._support_role_id = int(MainDatabase.setting('support_role'))
+            except Exception:
+                self._support_role_id = None
+        if self._support_role_id:
+            self._support_role = guild.get_role(self._support_role_id)
+        else:
+            self._support_role = None
+
     @discord.ui.button(label="Claim", style=discord.ButtonStyle.red, emoji="🎫", custom_id="ticket_claim")
     async def claim(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self._load_settings(interaction.guild)
+        if self._support_role_id is None:
+            await interaction.response.send_message(
+                "Der er ikke angivet en supportrolle. Kontakt venligst en administrator.",
+                ephemeral=True
+            )
+            return
+        if not self._support_role:
+            await interaction.response.send_message(
+                "Supportrollen blev ikke fundet. Kontakt venligst en administrator.",
+                ephemeral=True
+            )
+            return
+        if self._support_role not in interaction.user.roles:
+            await interaction.response.send_message(
+                "Du er ikke staff og kan derfor ikke claim denne ticket.",
+                ephemeral=True
+            )
+            return
+        
         ticket = Database().get({'channel_id': str(interaction.channel.id)})
         if not ticket:
             await interaction.response.send_message(

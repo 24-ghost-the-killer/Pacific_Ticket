@@ -17,7 +17,7 @@ class TicketCloseModel(discord.ui.Modal, title="Lukning af Ticket"):
         ticket = Database().get({
             'channel_id': interaction.channel.id
         })
-
+        
         owner = interaction.guild.get_member(int(ticket['owner_id']))
         if not owner:
             await interaction.response.send_message(
@@ -25,6 +25,14 @@ class TicketCloseModel(discord.ui.Modal, title="Lukning af Ticket"):
                 ephemeral=True
             )
             return
+        
+        await interaction.response.send_message(
+            f"Ticketen er bliver lukket om {MainDatabase.setting('close_time')} sekunder. Ejeren har fået besked.",
+            ephemeral=True
+        )
+        close_time = int(MainDatabase.setting('close_time'))
+        await discord.utils.sleep_until(discord.utils.utcnow() + datetime.timedelta(seconds=close_time))
+        await interaction.channel.delete(reason=f"Ticket lukket af {interaction.user} ({interaction.user.id})")
 
         embed = discord.Embed(
             title="**RadientRP - Ticket Lukket**",
@@ -56,11 +64,3 @@ class TicketCloseModel(discord.ui.Modal, title="Lukning af Ticket"):
                 ephemeral=True
             )
             return
-        await interaction.response.send_message(
-            f"Ticketen er bliver lukket om {MainDatabase.setting('close_time')} sekunder. Ejeren har fået besked.",
-            ephemeral=True
-        )
-        close_time = int(MainDatabase.setting('close_time'))
-        await discord.utils.sleep_until(discord.utils.utcnow() + datetime.timedelta(seconds=close_time))
-        await interaction.channel.delete(reason=f"Ticket lukket af {interaction.user} ({interaction.user.id})")
-

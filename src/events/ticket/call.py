@@ -51,4 +51,16 @@ class TicketCall(discord.ui.View):
                 ephemeral=True
             )
             return
+
+        ticket = Database().get({
+            'channel_id': str(interaction.channel.id)
+        })
+        
+        if not ticket:
+            await interaction.response.send_message(
+                "Denne ticket findes ikke i databasen. Kontakt venligst en administrator.",
+                ephemeral=True
+            )
+            return
+        
         await interaction.response.send_modal(Modal())

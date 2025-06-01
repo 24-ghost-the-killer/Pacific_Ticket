@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from src.utils.permissions import Permission
+from src.utils.ticket.close import TicketCloseModel
 from src.database.main import Database
 class Close(commands.Cog):
     def __init__(self, bot):
@@ -16,4 +17,4 @@ class Close(commands.Cog):
             )
             return
         
-        await interaction.response.send_message(f"Hello, {interaction.user.mention}!")
+        await interaction.response.send_modal(TicketCloseModel())

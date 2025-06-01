@@ -13,6 +13,10 @@ class Commands(commands.Cog):
                 class_name = filename[:-3].capitalize()
                 if hasattr(module, class_name):
                     cog_class = getattr(module, class_name)
+                    if not issubclass(cog_class, commands.Cog):
+                        print(f"Skipping {filename}: {class_name} is not a subclass of commands.Cog")
                     await bot.add_cog(cog_class(bot))
                     loaded.append(filename)
+                else:
+                    print(f"Skipping {filename}: {class_name} not found in module {module_name}")
         print(f"Loaded ticket commands: {', '.join(loaded) if loaded else 'None'}")

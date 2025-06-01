@@ -47,15 +47,16 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `name` varchar(50) DEFAULT NULL,
   `value` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Dumping data for table s87_Radient.settings: ~5 rows (approximately)
+-- Dumping data for table s87_Radient.settings: ~6 rows (approximately)
 REPLACE INTO `settings` (`id`, `name`, `value`) VALUES
 	(1, 'support_role', '1376312327514619995'),
 	(2, 'call_role', '1377057764475666615'),
 	(3, 'call_support', 'true'),
 	(4, 'close_time', '5'),
-	(5, 'panel_role', '1376311994147147846');
+	(5, 'panel_role', '1376311994147147846'),
+	(6, 'ticket_channel', '1376288663545188364');
 
 -- Dumping structure for table s87_Radient.tickets
 CREATE TABLE IF NOT EXISTS `tickets` (
@@ -66,16 +67,14 @@ CREATE TABLE IF NOT EXISTS `tickets` (
   `owner_id` varchar(50) DEFAULT NULL,
   `category` varchar(50) DEFAULT NULL,
   `transcript` longtext NOT NULL DEFAULT '[]',
+  `open` int(11) DEFAULT 1,
   `claimed` int(11) DEFAULT 0,
   `claimed_by` varchar(50) DEFAULT '',
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Dumping data for table s87_Radient.tickets: ~2 rows (approximately)
-REPLACE INTO `tickets` (`id`, `channel_name`, `channel_id`, `owner_username`, `owner_id`, `category`, `transcript`, `claimed`, `claimed_by`, `created_at`) VALUES
-	(1, 'ticket-ghost_the_killer24', '1377394950479548498', 'ghost_the_killer24', '676685347542925352', 'support', '[]', 0, NULL, '2025-05-28 21:15:47'),
-	(2, 'ticket-officalsenior', '1377408345316655155', 'offical.senior', '793058463272927234', 'politi', '[]', 0, '', '2025-05-28 22:09:01');
+-- Dumping data for table s87_Radient.tickets: ~0 rows (approximately)
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

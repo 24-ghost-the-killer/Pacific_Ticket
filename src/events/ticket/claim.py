@@ -1,7 +1,7 @@
 import discord
-from src.utils.ticket.database import TicketDatabase as Database
 from src.events.ticket.unclaim import TicketUnclaim as Unclaim
-from src.database.main import Database as MainDatabase
+from src.utils.ticket.database import TicketDatabase as Database
+from src.database.functions.settings import DatabaseSettings as Settings
 class TicketClaim(discord.ui.View):
     _category_cache = None
 
@@ -10,14 +10,14 @@ class TicketClaim(discord.ui.View):
         self._support_role_id = None
         self._support_role = None
         if TicketClaim._category_cache is None:
-            categories = Database().categorys() or []
+            categories = Database.categorys() or []
             TicketClaim._category_cache = {str(cat['value']): cat for cat in categories}
             TicketClaim._category_cache.update({cat['value']: cat for cat in categories})
 
     def _load_settings(self, guild):
         if self._support_role_id is None:
             try:
-                self._support_role_id = int(MainDatabase.setting('support_role'))
+                self._support_role_id = int(Settings.get('support_role'))
             except Exception:
                 self._support_role_id = None
         if self._support_role_id:
@@ -47,10 +47,24 @@ class TicketClaim(discord.ui.View):
             )
             return
         
-        ticket = Database().get({'channel_id': str(interaction.channel.id)})
+        ticket = Database.get({'channel_id': str(interaction.channel.id)})
         if not ticket:
             await interaction.response.send_message(
                 "Denne ticket findes ikke i databasen. Kontakt venligst en administrator.",
+                ephemeral=True
+            )
+            return
+        
+        if not ticket['open']:
+            await interaction.response.send_message(
+                "Denne ticket er lukket. Du kan ikke claim en lukket ticket.",
+                ephemeral=True
+            )
+            return
+        
+        if ticket['claimed']:
+            await interaction.response.send_message(
+                "Denne ticket er allerede claimet af en anden bruger.",
                 ephemeral=True
             )
             return
@@ -84,7 +98,7 @@ class TicketClaim(discord.ui.View):
         overwrites[interaction.user] = discord.PermissionOverwrite(read_messages=True, send_messages=True)
         
         try:
-            await interaction.channel.edit(overwrites=overwrites)
+            await interaction.channel.edit(overwrites=overwrites, name=f"claimed-{interaction.user.name}",)
         except discord.Forbidden:
             await interaction.response.send_message(
                 "Jeg har ikke tilladelse til at ændre tilladelserne for denne ticket. Kontakt venligst en administrator.",
@@ -99,20 +113,24 @@ class TicketClaim(discord.ui.View):
             return
 
         embed = discord.Embed(
-            title="**RadientRP - Ticket System**",
+            title="**Pacific - Ticket System**",
             description=(
                 f"{interaction.user.mention} har nu claimet denne ticket.\n"
                 f"Kun dig og ejeren ({owner.mention}) kan skrive. Supportrollen kan ikke længere skrive."
             ),
-            color=discord.Color.red()
+            color=discord.Color.blue()
         )
         embed.set_footer(
-            text=f"RadientRP • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
-            icon_url="https://radientrp.vercel.app/_next/image?url=%2Fradient_logo.png&w=128&q=75"
+            text=f"Pacific • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
+            icon_url=interaction.client.user.avatar.url if interaction.client.user.avatar else None
         )
-        await interaction.response.send_message(embed=embed, view=Unclaim(), ephemeral=False)
 
-        Database().update({
+        try:
+            await interaction.response.send_message(embed=embed, view=Unclaim(), ephemeral=False)
+        except discord.errors.NotFound:
+            await interaction.followup.send(embed=embed, view=Unclaim(), ephemeral=False)
+
+        Database.update(interaction.channel.id, {
             'channel_id': str(interaction.channel.id),
             'claimed': True,
             'claimed_by': str(interaction.user.id),

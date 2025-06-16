@@ -2,14 +2,14 @@ import discord
 from discord.ext import commands
 from src.utils.permissions import Permission
 from src.utils.ticket.dropdown import TicketDropdown
-from src.database.main import Database
+from src.database.functions.settings import SettingsDatabase as Settings
 class Panel(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.app_commands.command(name="panel", description="Create a new ticket panel")
+    @discord.app_commands.command(name="panel", description="Opret et nyt ticket panel for at oprette en ticket")
     async def panel(self, interaction: discord.Interaction):
-        access = Permission(interaction.user, Database.setting('panel_role')).check()
+        access = Permission(interaction.user, Settings.get('panel_role')).check()
         if not access:
             await interaction.response.send_message(
                 "Du har ikke tilladelse til at bruge denne kommando.",
@@ -18,9 +18,9 @@ class Panel(commands.Cog):
             return
 
         embed = discord.Embed(
-            title="RadientRP - Ticket System",
+            title="Pacific - Ticket System",
             description=(
-                "Hej og velkommen til RadientRP's ticket support!\n\n"
+                "Hej og velkommen til Pacific's ticket support!\n\n"
                 "Vælg venligst en kategori nedenfor for at oprette en ticket.\n"
                 "Hvis du har brug for hjælp, kan du kontakte en administrator.\n\n"
                 "**Kategorier:**\n"
@@ -29,11 +29,11 @@ class Panel(commands.Cog):
                 "💰 **Donation:** Spørgsmål om donationer.\n"
                 "👥 **Staff:** Kontakt vores staff."
             ),
-            color=discord.Color.red(),
+            color=discord.Color.blue(),
         )
         embed.set_footer(
-            text=f"RadientRP • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
-            icon_url="https://radientrp.vercel.app/_next/image?url=%2Fradient_logo.png&w=128&q=75"
+            text=f"Pacific • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
+            icon_url=interaction.client.user.avatar.url if interaction.client.user.avatar else None
         )
         view = discord.ui.View(timeout=None)
         view.add_item(TicketDropdown())

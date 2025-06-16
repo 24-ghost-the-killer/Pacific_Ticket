@@ -1,13 +1,13 @@
-Create Ticket Panel - File Created: Working - Tested
+Create Ticket Panel - File Created: Working - Tested .
 
-Add to ticket - File Created: Working - Tested
-Remove from ticket - File Created: Working - Tested
+Add to ticket - File Created: Working - Tested .
+Remove from ticket - File Created: Working - Tested .
 
-Claim Ticket - File Created: Working - Tested
-Unclaim Ticket - File Created: Working - Tested
+Claim Ticket - File Created: Working - Tested .
+Unclaim Ticket - File Created: Working - Tested .
 
-Create Ticket - File Created: Working - Tested
-Close Ticket - File Created: Working - Tested
-Rename Ticket - File Created: Working - Tested
-Switch Ticket Category - File Created: 
-Switch Ticket Owner - File Created:
+Create Ticket - File Created: Working - Tested .
+Close Ticket - File Created: Working - Tested .
+Rename Ticket - File Created: Working - Tested .
+Switch Ticket Category - File Created: Working - Tested .
+Switch Ticket Owner - File Created: Working - Tested .

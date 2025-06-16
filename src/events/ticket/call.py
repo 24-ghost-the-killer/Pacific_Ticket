@@ -1,6 +1,7 @@
 import discord
-from src.database.main import Database
 from src.utils.ticket.support import TicketModel as Modal
+from src.utils.ticket.database import TicketDatabase as Database
+from src.database.functions.settings import DatabaseSettings as Settings
 
 class TicketCall(discord.ui.View):
     def __init__(self):
@@ -11,12 +12,12 @@ class TicketCall(discord.ui.View):
 
     def _load_settings(self, guild):
         if self._call_support_enabled is None:
-            self._call_support_enabled = Database().setting('call_support')
+            self._call_support_enabled = Settings.get('call_support')
         if self._call_role_set is None:
-            self._call_role_set = Database.setting('call_role')
+            self._call_role_set = Settings.get('call_role')
         if self._support_role_id is None:
             try:
-                self._support_role_id = int(Database().setting('support_role'))
+                self._support_role_id = int(Settings.get('support_role'))
             except Exception:
                 self._support_role_id = None
         if self._support_role_id:

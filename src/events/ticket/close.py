@@ -1,7 +1,7 @@
 import discord
-from src.database.main import Database as MainDatabase
 from src.utils.ticket.close import TicketCloseModel
 from src.utils.ticket.database import TicketDatabase as Database
+from src.database.functions.settings import DatabaseSettings as Settings
 class TicketClose(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
@@ -11,7 +11,7 @@ class TicketClose(discord.ui.View):
     def _load_settings(self, guild):
         if self._support_role_id is None:
             try:
-                self._support_role_id = int(MainDatabase.setting('support_role'))
+                self._support_role_id = int(Settings.get('support_role'))
             except Exception:
                 self._support_role_id = None
         if self._support_role_id:
@@ -41,10 +41,9 @@ class TicketClose(discord.ui.View):
             )
             return
 
-        ticket = Database().get({
+        ticket = Database.get({
             'channel_id': str(interaction.channel.id)
         })
-    
 
         if not ticket:
             await interaction.response.send_message(

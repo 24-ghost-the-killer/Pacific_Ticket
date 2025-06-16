@@ -1,11 +1,7 @@
-# Ignore Python cache files
 __pycache__/
 *.py[cod]
-
-# Byte-compiled / optimized / DLL files
 *.pyc
 *.pyo
 *.pyd
-
-# VS Code settings (optional, but common)
 .vscode/
+.env

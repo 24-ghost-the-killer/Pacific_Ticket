@@ -1,25 +1,16 @@
 import discord
 from discord.ext import commands
-from src.utils.permissions import Permission
 from src.utils.ticket.dropdown import TicketDropdown
-from src.database.main import Database
 class Create(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @discord.app_commands.command(name="create", description="Create a new ticket")
     async def create(self, interaction: discord.Interaction):
-        access = Permission(interaction.user, Database.setting('support_role')).check()
-        if not access:
-            await interaction.response.send_message(
-                "Du har ikke tilladelse til at bruge denne kommando.",
-                ephemeral=True
-            )
-            return
         embed = discord.Embed(
-            title="RadientRP - Ticket System",
+            title="Pacific - Ticket System",
             description=(
-                "Hej og velkommen til RadientRP's ticket support!\n\n"
+                "Hej og velkommen til Pacific's ticket support!\n\n"
                 "Vælg venligst en kategori nedenfor for at oprette en ticket.\n"
                 "Hvis du har brug for hjælp, kan du kontakte en administrator.\n\n"
                 "**Kategorier:**\n"
@@ -28,11 +19,11 @@ class Create(commands.Cog):
                 "💰 **Donation:** Spørgsmål om donationer.\n"
                 "👥 **Staff:** Kontakt vores staff."
             ),
-            color=discord.Color.red(),
+            color=discord.Color.blue(),
         )
         embed.set_footer(
-            text=f"RadientRP • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
-            icon_url="https://radientrp.vercel.app/_next/image?url=%2Fradient_logo.png&w=128&q=75"
+            text=f"Pacific • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
+            icon_url=interaction.client.user.avatar.url if interaction.client.user.avatar else None
         )
         view = discord.ui.View(timeout=None)
         view.add_item(TicketDropdown())

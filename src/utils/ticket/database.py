@@ -49,23 +49,24 @@ class TicketDatabase():
             return None
     
     @staticmethod
-    def update(data={
-        'channel_id': None,
-        'claimed': None,
-        'claimed_by': None
-    }):
+    def update(query: str, update_fields: dict):
         try:
             with Database.connect() as conn:
                 with conn.cursor(dictionary=True) as cursor:
+                    ticket = TicketDatabase.get({'channel_id': query})
+
+                    if not ticket:
+                        print("Ticket not found for update.")
+                        return None
+
+                    update_set = ', '.join(f"{key} = %s" for key in update_fields.keys())
+                    query_values = tuple(update_fields.values()) + (query,)
                     cursor.execute(
-                        "UPDATE tickets SET claimed = %s, claimed_by = %s WHERE channel_id = %s",
-                        (
-                            data['claimed'],
-                            data['claimed_by'],
-                            data['channel_id']
-                        )
+                        f"UPDATE tickets SET {update_set} WHERE channel_id = %s",
+                        query_values
                     )
                     conn.commit()
+                    return TicketDatabase.get({'channel_id': query})
         except Exception as e:
             print(f"Error in TicketDatabase.update: {e}")
             return None

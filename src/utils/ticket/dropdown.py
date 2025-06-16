@@ -1,10 +1,8 @@
 import discord
-from src.utils.ticket.database import TicketDatabase as Database
-
 from src.events.ticket.call import TicketCall as Call
 from src.events.ticket.close import TicketClose as Close
 from src.events.ticket.claim import TicketClaim as Claim
-
+from src.utils.ticket.database import TicketDatabase as Database
 class TicketDropdown(discord.ui.Select):
     def __init__(self):
         self._categories = None
@@ -39,12 +37,12 @@ class TicketDropdown(discord.ui.Select):
 
     def _init_categories(self):
         if self._categories is None:
-            self._categories = Database().categorys()
+            self._categories = Database.categorys()
 
     def _get_category(self, value):
         if value in self._category_cache:
             return self._category_cache[value]
-        cat = Database().category({'value': value})
+        cat = Database.category({'value': value})
         if cat:
             self._category_cache[value] = cat
         return cat
@@ -130,18 +128,18 @@ class TicketDropdown(discord.ui.Select):
             })  
 
             embed = discord.Embed(
-                title = "RadientRP - Ticket System",
+                title = "Pacific - Ticket System",
                 description = (
                     f"Hej {interaction.user.mention}, din ticket er oprettet!\n\n"
                     f"Kategori: {category['label']}\n"
-                    "Vores staff vil snart være i kontakt med dig.\n\n"
+                    "Vores personale vil snart være i kontakt med dig.\n\n"
                     "Hvis du har brug for hjælp, kan du kontakte en administrator."
                 ),
-                color=discord.Color.red(),
+                color=discord.Color.blue(),
             )
             embed.set_footer(
-                text=f"RadientRP • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
-                icon_url="https://radientrp.vercel.app/_next/image?url=%2Fradient_logo.png&w=128&q=75"
+                text=f"Pacific • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
+                icon_url=interaction.client.user.avatar.url if interaction.client.user.avatar else None
             )
 
             view = discord.ui.View(timeout=None)

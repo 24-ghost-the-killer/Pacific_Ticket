@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from src.utils.permissions import Permission
-from src.database.main import Database as MainDatabase
+from src.database.functions.settings import DatabaseSettings as Settings
 from src.utils.ticket.database import TicketDatabase as Database
 class Unclaim(commands.Cog):
     _category_cache = None
@@ -12,9 +12,9 @@ class Unclaim(commands.Cog):
             Unclaim._category_cache = {str(cat['value']): cat for cat in categories}
             Unclaim._category_cache.update({cat['value']: cat for cat in categories})
 
-    @discord.app_commands.command(name="unclaim", description="Claim the current ticket")
+    @discord.app_commands.command(name="unclaim", description="Unclaim en ticket, så supportrollen kan skrive igen")
     async def claim(self, interaction: discord.Interaction):
-        access = Permission(interaction.user, MainDatabase.setting('support_role')).check()
+        access = Permission(interaction.user, Settings.get('support_role')).check()
         if not access:
             await interaction.response.send_message(
                 "Du har ikke tilladelse til at bruge denne kommando.",
@@ -66,7 +66,7 @@ class Unclaim(commands.Cog):
         overwrites[role] = discord.PermissionOverwrite(read_messages=True, send_messages=True)
         overwrites[owner] = discord.PermissionOverwrite(read_messages=True, send_messages=True)
         try:
-            await interaction.channel.edit(overwrites=overwrites)
+            await interaction.channel.edit(overwrites=overwrites, name=f"ticket-{owner.name}")
         except discord.Forbidden:
             await interaction.response.send_message(
                 "Jeg har ikke tilladelse til at ændre tilladelserne for denne ticket. Kontakt venligst en administrator.",
@@ -80,12 +80,6 @@ class Unclaim(commands.Cog):
             )
             return
 
-        Database().update({
-            'channel_id': str(interaction.channel.id),
-            'claimed': False,
-            'claimed_by': ''
-        })
-
         await interaction.response.send_message(
             embed=discord.Embed(
                 title="Ticket Unclaimed",
@@ -93,10 +87,16 @@ class Unclaim(commands.Cog):
                     f"{interaction.user.mention} har nu unclaimet denne ticket.\n"
                     f"Supportrollen kan nu skrive igen. Ejeren ({owner.mention}) har stadig adgang."
                 ),
-                color=discord.Color.red()
+                color=discord.Color.blue()
             ).set_footer(
-                text=f"RadientRP • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
-                icon_url="https://radientrp.vercel.app/_next/image?url=%2Fradient_logo.png&w=128&q=75"
+                text=f"Pacific • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
+                icon_url=interaction.client.user.avatar.url if interaction.client.user.avatar else None
             ),
             ephemeral=False
         )
+
+        Database.update(interaction.channel.id, {
+            'channel_id': str(interaction.channel.id),
+            'claimed': False,
+            'claimed_by': ''
+        })

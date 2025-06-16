@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from src.database.main import Database as MainDatabase
+from src.database.functions.settings import DatabaseSettings as Settings
 from src.utils.ticket.database import TicketDatabase as Database
 from src.utils.permissions import Permission
 
@@ -8,10 +8,10 @@ class Rename(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.app_commands.command(name="rename", description="Rename the current ticket")
-    @discord.app_commands.describe(string="The new name for the ticket")
+    @discord.app_commands.command(name="rename", description="Omdøb ticketens navn til noget andet")
+    @discord.app_commands.describe(navn="Det nye navn til ticketen")
     async def rename(self, interaction: discord.Interaction, string: str):
-        access = Permission(interaction.user, MainDatabase.setting('support_role')).check()
+        access = Permission(interaction.user, Settings.get('support_role')).check()
         if not access:
             await interaction.response.send_message(
                 "Du har ikke tilladelse til at bruge denne kommando.",
@@ -32,18 +32,21 @@ class Rename(commands.Cog):
         
         try: 
             await interaction.channel.edit(name=string)
+            Database.update(interaction.channel.id, {
+                'channel_name': string
+            })
 
             await interaction.response.send_message(
                 embed=discord.Embed(
-                    title="Radient - Ticket System",
+                    title="Pacific - Ticket System",
                     description=(
                         f"Ticketen er blevet omdøbt af {interaction.user.mention} til `{string}`.\n"
                         "Hvis du har spørgsmål, kontakt venligst en administrator."
                     ),
-                    color=discord.Color.red()
+                    color=discord.Color.blue()
                 ).set_footer(
-                    text=f"RadientRP • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
-                    icon_url="https://radientrp.vercel.app/_next/image?url=%2Fradient_logo.png&w=128&q=75"
+                    text=f"Pacific • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
+                    icon_url=interaction.client.user.avatar.url if interaction.client.user.avatar else None
                 ),
                 ephemeral=False
             )

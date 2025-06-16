@@ -1,6 +1,6 @@
 import discord
 from src.utils.ticket.database import TicketDatabase as Database
-from src.database.main import Database as MainDatabase
+from src.database.functions.settings import DatabaseSettings as Settings
 
 class TicketUnclaim(discord.ui.View):
     _category_cache = None
@@ -17,7 +17,7 @@ class TicketUnclaim(discord.ui.View):
     def _load_settings(self, guild):
         if self._support_role_id is None:
             try:
-                self._support_role_id = int(MainDatabase.setting('support_role'))
+                self._support_role_id = int(Settings.get('support_role'))
             except Exception:
                 self._support_role_id = None
         if self._support_role_id:
@@ -91,7 +91,7 @@ class TicketUnclaim(discord.ui.View):
         overwrites[role] = discord.PermissionOverwrite(read_messages=True, send_messages=True)
         overwrites[owner] = discord.PermissionOverwrite(read_messages=True, send_messages=True)
         try:
-            await interaction.channel.edit(overwrites=overwrites)
+            await interaction.channel.edit(overwrites=overwrites, name=f"ticket-{owner.name}")
         except discord.Forbidden:
             await interaction.response.send_message(
                 "Jeg har ikke tilladelse til at ændre tilladelserne for denne ticket. Kontakt venligst en administrator.",
@@ -105,7 +105,7 @@ class TicketUnclaim(discord.ui.View):
             )
             return
 
-        Database().update({
+        Database.update(interaction.channel.id, {
             'channel_id': str(interaction.channel.id),
             'claimed': False,
             'claimed_by': ''
@@ -118,10 +118,10 @@ class TicketUnclaim(discord.ui.View):
                     f"{interaction.user.mention} har nu unclaimet denne ticket.\n"
                     f"Supportrollen kan nu skrive igen. Ejeren ({owner.mention}) har stadig adgang."
                 ),
-                color=discord.Color.red()
+                color=discord.Color.blue()
             ).set_footer(
-                text=f"RadientRP • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
-                icon_url="https://radientrp.vercel.app/_next/image?url=%2Fradient_logo.png&w=128&q=75"
+                text=f"Pacific • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
+                icon_url=interaction.client.user.avatar.url if interaction.client.user.avatar else None
             ),
             ephemeral=False
         )

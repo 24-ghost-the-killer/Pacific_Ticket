@@ -1,9 +1,9 @@
 import discord
 from discord.ext import commands
-from src.database.main import Database as MainDatabase
-from src.utils.ticket.database import TicketDatabase as Database
 from src.utils.permissions import Permission
 from src.events.ticket.unclaim import TicketUnclaim as Unclaim
+from src.utils.ticket.database import TicketDatabase as Database
+from src.database.functions.settings import DatabaseSettings as Settings
 class Claim(commands.Cog):
     _category_cache = None
 
@@ -16,7 +16,7 @@ class Claim(commands.Cog):
 
     @discord.app_commands.command(name="claim", description="Claim the current ticket")
     async def claim(self, interaction: discord.Interaction):
-        access = Permission(interaction.user, MainDatabase.setting('support_role')).check()
+        access = Permission(interaction.user, Settings.get('support_role')).check()
         if not access:
             await interaction.response.send_message(
                 "Du har ikke tilladelse til at bruge denne kommando.",
@@ -61,7 +61,7 @@ class Claim(commands.Cog):
         overwrites[interaction.user] = discord.PermissionOverwrite(read_messages=True, send_messages=True)
         
         try:
-            await interaction.channel.edit(overwrites=overwrites)
+            await interaction.channel.edit(overwrites=overwrites, name=f"claimed-{interaction.user.name}")
         except discord.Forbidden:
             await interaction.response.send_message(
                 "Jeg har ikke tilladelse til at ændre tilladelserne for denne ticket. Kontakt venligst en administrator.",
@@ -76,20 +76,20 @@ class Claim(commands.Cog):
             return
 
         embed = discord.Embed(
-            title="**RadientRP - Ticket System**",
+            title="**Pacific - Ticket System**",
             description=(
                 f"{interaction.user.mention} har nu claimet denne ticket.\n"
                 f"Kun dig og ejeren ({owner.mention}) kan skrive. Supportrollen kan ikke længere skrive."
             ),
-            color=discord.Color.red()
+            color=discord.Color.blue()
         )
         embed.set_footer(
-            text=f"RadientRP • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
-            icon_url="https://radientrp.vercel.app/_next/image?url=%2Fradient_logo.png&w=128&q=75"
+            text=f"Pacific • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
+            icon_url=interaction.client.user.avatar.url if interaction.client.user.avatar else None
         )
         await interaction.response.send_message(embed=embed, view=Unclaim(), ephemeral=False)
 
-        Database().update({
+        Database.update(interaction.channel.id, {
             'channel_id': str(interaction.channel.id),
             'claimed': True,
             'claimed_by': str(interaction.user.id),

@@ -3,7 +3,7 @@ import datetime
 from src.utils.ticket.database import TicketDatabase as Database
 from src.database.functions.settings import DatabaseSettings as Settings
 
-class TicketCloseModel(discord.ui.Modal, title="Lukning af Ticket"):
+class Model(discord.ui.Modal, title="Lukning af Ticket"):
     reason = discord.ui.TextInput(
         label="Årsag til lukning",
         style=discord.TextStyle.short,

@@ -1,5 +1,5 @@
 import discord
-from src.utils.ticket.model.close import TicketCloseModel
+from src.utils.ticket.model.close import Model
 from src.utils.ticket.database import TicketDatabase as Database
 from src.database.functions.settings import DatabaseSettings as Settings
 class TicketClose(discord.ui.View):
@@ -66,7 +66,7 @@ class TicketClose(discord.ui.View):
             )
             return
     
-        await interaction.response.send_modal(TicketCloseModel())
+        await interaction.response.send_modal(Model())
 
 
 

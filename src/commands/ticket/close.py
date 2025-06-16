@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from src.utils.permissions import Permission
-from src.utils.ticket.model.close import TicketCloseModel
+from src.utils.ticket.model.close import Model
 from src.utils.ticket.database import TicketDatabase as Database
 from src.database.functions.settings import DatabaseSettings as Settings
 class Close(commands.Cog):
@@ -41,4 +41,4 @@ class Close(commands.Cog):
             )
             return
 
-        await interaction.response.send_modal(TicketCloseModel())
+        await interaction.response.send_modal(Model())

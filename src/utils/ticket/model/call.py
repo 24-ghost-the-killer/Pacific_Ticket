@@ -1,7 +1,8 @@
 import discord
 from src.utils.ticket.database import TicketDatabase as Database
 from src.database.functions.settings import DatabaseSettings as Settings
-class TicketModel(discord.ui.Modal, title="Indkald til support"):
+
+class Model(discord.ui.Modal, title="Indkald til support"):
     def __init__(self):
         super().__init__(timeout=None)
         self.call_role = Settings.get('call_role')

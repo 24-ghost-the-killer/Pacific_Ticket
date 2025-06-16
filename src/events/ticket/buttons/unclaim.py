@@ -47,7 +47,7 @@ class TicketUnclaim(discord.ui.View):
             )
             return
 
-        ticket = Database().get({
+        ticket = Database.get({
             'channel_id': str(interaction.channel.id)
         })
 
@@ -58,16 +58,23 @@ class TicketUnclaim(discord.ui.View):
             )
             return
 
-        if not ticket.get('claimed'):
+        if not ticket['claimed']:
             await interaction.response.send_message(
                 "Denne ticket er ikke blevet claimet endnu.",
                 ephemeral=True
             )
             return
 
-        if not ticket.get('claimed_by') or str(interaction.user.id) != str(ticket['claimed_by']):
+        if not ticket['claimed_by'] or str(interaction.user.id) != str(ticket['claimed_by']):
             await interaction.response.send_message(
                 "Kun personen der har claimet denne ticket kan bruge denne knap.",
+                ephemeral=True
+            )
+            return
+        
+        if str(interaction.user.id) == str(ticket['owner_id']):
+            await interaction.response.send_message(
+                "Du kan ikke unclaim en ticket du selv har oprettet.",
                 ephemeral=True
             )
             return

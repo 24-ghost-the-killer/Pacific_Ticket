@@ -1,5 +1,5 @@
 import discord
-from src.utils.ticket.support import TicketModel as Modal
+from src.utils.ticket.model.close import TicketCloseModel as Modal
 from src.utils.ticket.database import TicketDatabase as Database
 from src.database.functions.settings import DatabaseSettings as Settings
 

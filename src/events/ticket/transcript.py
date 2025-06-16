@@ -3,6 +3,7 @@ from discord.ext import commands
 from src.utils.ticket.database import TicketDatabase as Database
 import os
 import json
+import datetime
 
 class Transcript(commands.Cog):
     @commands.Cog.listener()
@@ -17,7 +18,7 @@ class Transcript(commands.Cog):
         transcript_entry = {
             'user': { 'name': message.author.name, 'id': str(message.author.id) },
             'content': { 'id': str(message.id), 'content': message.content },
-            'timestamp': message.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            'timestamp': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         }
 
         if message.attachments:

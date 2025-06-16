@@ -1,5 +1,5 @@
 import discord
-from src.events.ticket.unclaim import TicketUnclaim as Unclaim
+from src.events.ticket.buttons.unclaim import TicketUnclaim as Unclaim
 from src.utils.ticket.database import TicketDatabase as Database
 from src.database.functions.settings import DatabaseSettings as Settings
 class TicketClaim(discord.ui.View):
@@ -65,6 +65,20 @@ class TicketClaim(discord.ui.View):
         if ticket['claimed']:
             await interaction.response.send_message(
                 "Denne ticket er allerede claimet af en anden bruger.",
+                ephemeral=True
+            )
+            return
+        
+        if ticket['owner_id'] == str(interaction.user.id):
+            await interaction.response.send_message(
+                "Der skete en fejl, du kan ikke claim en ticket du selv har oprettet.",
+                ephemeral=True
+            )
+            return
+        
+        if ticket['owner_id'] == str(interaction.user.id):
+            await interaction.response.send_message(
+                "Du kan ikke claim en ticket du selv har oprettet.",
                 ephemeral=True
             )
             return

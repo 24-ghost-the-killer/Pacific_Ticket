@@ -46,6 +46,13 @@ class Unclaim(commands.Cog):
                 ephemeral=True
             )
             return
+        
+        if ticket['owner_id'] == str(interaction.user.id):
+            await interaction.response.send_message(
+                "Du kan ikke unclaim en ticket du selv har oprettet.",
+                ephemeral=True
+            )
+            return
 
         category = Unclaim._category_cache.get(str(ticket['category']))
         role = interaction.guild.get_role(int(category['role_access'])) if category and category.get('role_access') else None

@@ -2,13 +2,13 @@ import discord
 from discord.ext import commands
 from src.utils.permissions import Permission
 from src.utils.ticket.database import TicketDatabase as Database
-from src.database.functions.settings import SettingsDatabase as Settings
+from src.database.functions.settings import DatabaseSettings as Settings
 class Add(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @discord.app_commands.command(name="add", description="Tilføj en bruger til ticketen")
-    @discord.app_commands.describe(bruger="Brugeren du vil tilføje til ticketen")
+    @discord.app_commands.describe(user="Brugeren du vil tilføje til ticketen")
     async def add(self, interaction: discord.Interaction, user: discord.Member):
         await interaction.response.defer()
 
@@ -20,10 +20,8 @@ class Add(commands.Cog):
             )
             return
         
-        ticket = Database.get({
-            'channel_id': interaction.channel_id
-        })
-        
+        ticket = Database.get({ 'channel_id': str(interaction.channel.id) })
+
         if not ticket:
             await interaction.followup.send(
                 "Denne ticket findes ikke i databasen. Kontakt venligst en administrator.",

@@ -9,7 +9,7 @@ class Rename(commands.Cog):
         self.bot = bot
 
     @discord.app_commands.command(name="rename", description="Omdøb ticketens navn til noget andet")
-    @discord.app_commands.describe(navn="Det nye navn til ticketen")
+    @discord.app_commands.describe(string="Det nye navn til ticketen")
     async def rename(self, interaction: discord.Interaction, string: str):
         access = Permission(interaction.user, Settings.get('support_role')).check()
         if not access:

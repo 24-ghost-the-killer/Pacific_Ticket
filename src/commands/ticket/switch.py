@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from src.utils.ticket.database import TicketDatabase as Database
-from src.database.main import Database as Settings
+from src.database.functions.settings import DatabaseSettings as Settings
 from src.utils.permissions import Permission
 
 # Initialize category cache globally

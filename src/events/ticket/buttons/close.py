@@ -1,5 +1,5 @@
 import discord
-from src.utils.ticket.close import TicketCloseModel
+from src.utils.ticket.model.close import TicketCloseModel
 from src.utils.ticket.database import TicketDatabase as Database
 from src.database.functions.settings import DatabaseSettings as Settings
 class TicketClose(discord.ui.View):
@@ -48,6 +48,20 @@ class TicketClose(discord.ui.View):
         if not ticket:
             await interaction.response.send_message(
                 "Denne ticket findes ikke i databasen. Kontakt venligst en administrator.",
+                ephemeral=True
+            )
+            return
+        
+        if not ticket['claimed']:
+            await interaction.response.send_message(
+                "Denne ticket er ikke blevet taget af en fra personalet. Du kan ikke lukke en ticket, der ikke er taget.",
+                ephemeral=True
+            )
+            return
+        
+        if not ticket['claimed_by'] == str(interaction.user.id):
+            await interaction.response.send_message(
+                "Du kan ikke lukke denne ticket, da du ikke er den, der har taget den.",
                 ephemeral=True
             )
             return

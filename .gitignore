@@ -5,3 +5,4 @@ __pycache__/
 *.pyd
 .vscode/
 .env
+commands.txt

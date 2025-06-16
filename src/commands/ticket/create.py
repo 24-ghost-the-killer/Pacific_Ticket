@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from src.utils.ticket.dropdown import TicketDropdown
+from src.utils.ticket.dropdown.select import CategorySelect
 class Create(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -26,7 +26,7 @@ class Create(commands.Cog):
             icon_url=interaction.client.user.avatar.url if interaction.client.user.avatar else None
         )
         view = discord.ui.View(timeout=None)
-        view.add_item(TicketDropdown())
+        view.add_item(CategorySelect())
         await interaction.response.send_message(
             ephemeral=True,
             embed=embed,

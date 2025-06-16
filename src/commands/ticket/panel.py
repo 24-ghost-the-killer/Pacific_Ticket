@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
 from src.utils.permissions import Permission
-from src.utils.ticket.dropdown import TicketDropdown
-from src.database.functions.settings import SettingsDatabase as Settings
+from src.utils.ticket.dropdown.select import CategorySelect
+from src.database.functions.settings import DatabaseSettings as Settings
 class Panel(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -36,7 +36,7 @@ class Panel(commands.Cog):
             icon_url=interaction.client.user.avatar.url if interaction.client.user.avatar else None
         )
         view = discord.ui.View(timeout=None)
-        view.add_item(TicketDropdown())
+        view.add_item(CategorySelect())
         await interaction.response.send_message(
             embed=embed,
             view=view,

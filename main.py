@@ -19,13 +19,13 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 async def on_ready():
     print(f'Connected to {bot.user.name} - {bot.user.id}')
     try:
-        db = Database.connect()
-        print('Connected to MySQL database successfully.')
-        db.close()
+        with Database.connect() as conn:
+            print('Connected to the database successfully.')
+            conn.close()
     except Exception as e:
         print(f'Failed to connect to MySQL: {e}')
     await Commands.load(bot)
-    await Events.view(bot)
+    await Events.load(bot)
     await bot.tree.sync()
 
 if __name__ == "__main__":

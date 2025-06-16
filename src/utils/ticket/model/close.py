@@ -46,7 +46,7 @@ class TicketCloseModel(discord.ui.Modal, title="Lukning af Ticket"):
             embed=discord.Embed(
                 title="Pacific - Ticket Lukket",
                 description=(
-                    f"Ticketen er ved at blive lukket af {interaction.user.mention}.\n"
+                    f"Din ticket på pacific er ved at blive lukket.\n"
                     f"Du kan ikke længere sende beskeder i denne ticket.\n\n"
                     f"**Ticket ID:** `{ticket['id']}`\n"
                     f"**Lukket af:** {interaction.user.mention}\n"
@@ -70,7 +70,7 @@ class TicketCloseModel(discord.ui.Modal, title="Lukning af Ticket"):
         embed = discord.Embed(
             title="**Pacific - Ticket Lukket**",
             description=(
-                f"Ticketen er blevet lukket af {interaction.user.mention}.\n"
+                f"Ticketen er blevet lukket.\n"
                 f"Du kan ikke længere sende beskeder i denne ticket.\n\n"
                 f"**Ticket ID:** `{ticket['id']}`\n"
                 f"**Lukket af:** {interaction.user.mention}\n"

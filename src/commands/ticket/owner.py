@@ -9,7 +9,7 @@ class Owner(commands.Cog):
         self.bot = bot
 
     @discord.app_commands.command(name="owner", description="Ændre ejeren af en ticket")
-    @discord.app_commands.describe(bruger="Den nye ejer af ticketen")
+    @discord.app_commands.describe(user="Den nye ejer af ticketen")
     async def owner(self, interaction: discord.Interaction, user: discord.Member):
         access = Permission(interaction.user, Settings.get('support_role')).check()
         if not access:

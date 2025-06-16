@@ -9,7 +9,7 @@ class Remove(commands.Cog):
         self.bot = bot
 
     @discord.app_commands.command(name="remove", description="Fjern en bruger fra ticketen")
-    @discord.app_commands.describe(bruger="Brugeren du vil fjerne fra ticketen")
+    @discord.app_commands.describe(user="Brugeren du vil fjerne fra ticketen")
     async def remove(self, interaction: discord.Interaction, user: discord.Member):
         access = Permission(interaction.user, Settings.get('support_role')).check()
         if not access:

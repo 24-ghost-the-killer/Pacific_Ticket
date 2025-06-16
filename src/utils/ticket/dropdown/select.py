@@ -1,9 +1,9 @@
 import discord
-from src.events.ticket.call import TicketCall as Call
-from src.events.ticket.close import TicketClose as Close
-from src.events.ticket.claim import TicketClaim as Claim
+from src.events.ticket.buttons.call import TicketCall as Call
+from src.events.ticket.buttons.close import TicketClose as Close
+from src.events.ticket.buttons.claim import TicketClaim as Claim
 from src.utils.ticket.database import TicketDatabase as Database
-class TicketDropdown(discord.ui.Select):
+class CategorySelect(discord.ui.Select):
     def __init__(self):
         self._categories = None
         self._category_cache = {}
@@ -147,7 +147,9 @@ class TicketDropdown(discord.ui.Select):
                 view.add_item(button_cls().children[0])
 
             await channel.send(embed=embed,view=view)
-            await interaction.response.send_message(
+            await interaction.response.defer()
+
+            await interaction.followup.send(
                 f"Din ticket er oprettet: {channel.mention}",
                 ephemeral=True
             )
@@ -155,7 +157,7 @@ class TicketDropdown(discord.ui.Select):
             try:
                 dropdownMessage = await interaction.channel.fetch_message(interaction.message.id)
                 view = discord.ui.View(timeout=None)
-                view.add_item(TicketDropdown())
+                view.add_item(CategorySelect())
                 if dropdownMessage:
                     await dropdownMessage.edit(view=view)
             except discord.NotFound:

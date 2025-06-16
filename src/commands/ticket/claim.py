@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from src.utils.permissions import Permission
-from src.events.ticket.unclaim import TicketUnclaim as Unclaim
+from src.events.ticket.buttons.unclaim import TicketUnclaim as Unclaim
 from src.utils.ticket.database import TicketDatabase as Database
 from src.database.functions.settings import DatabaseSettings as Settings
 class Claim(commands.Cog):
@@ -24,10 +24,18 @@ class Claim(commands.Cog):
             )
             return
         
-        ticket = Database().get({'channel_id': str(interaction.channel.id)})
+        ticket = Database.get({ 'channel_id': str(interaction.channel.id) })
+        
         if not ticket:
             await interaction.response.send_message(
                 "Denne ticket findes ikke i databasen. Kontakt venligst en administrator.",
+                ephemeral=True
+            )
+            return
+        
+        if ticket['owner_id'] == str(interaction.user.id):
+            await interaction.response.send_message(
+                "Du kan ikke claim en ticket du selv har oprettet.",
                 ephemeral=True
             )
             return

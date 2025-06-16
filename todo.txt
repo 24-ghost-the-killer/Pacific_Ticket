@@ -1,0 +1,19 @@
+Commands: De skal være lavet færdig samt tested
+    Create Ticket Panel - File Created: Working - Tested
+
+    Add to ticket - File Created: Working - Tested
+    Remove from ticket - File Created: Working - Tested
+
+    Claim Ticket - File Created: Working - Tested
+    Unclaim Ticket - File Created: Working - Tested
+
+    Create Ticket - File Created: Working - Tested
+    Close Ticket - File Created: Working - Tested
+    Rename Ticket - File Created: Working - Tested
+    Switch Ticket Category - File Created: Working - Tested
+    Switch Ticket Owner - File Created: Working - Tested
+Admin Commands: Er ikke så vigtigt pt, men bliver lavet med tiden
+    Create Category - 
+    Delete Category - 
+    Change Category - 
+Dashboard: Der skal laves et dashboard i fremtiden i forhold til transcript, men faws prøver at lave lortet men går ikke så godt

@@ -1,4 +1,4 @@
-Commands: De skal være lavet færdig samt tested
+Commands: Alle commands er lavet og virker (Næsten Ingen Fejl)
     Create Ticket Panel - File Created: Working - Tested
 
     Add to ticket - File Created: Working - Tested
@@ -13,14 +13,12 @@ Commands: De skal være lavet færdig samt tested
     Switch Ticket Category - File Created: Working - Tested
     Switch Ticket Owner - File Created: Working - Tested
     
-Admin Commands: Er ikke så vigtigt pt, men bliver lavet med tiden
+Admin Commands: Dette er ikke lavet (:D)
     Create Category - 
     Delete Category - 
     Change Category - 
 
-Dashboard: Der skal laves et dashboard i fremtiden i forhold til transcript, men faws prøver at lave lortet men går ikke så godt
-
-Logs: Alle logs skal laves inden botten bliver brugt for at sikrer at der ingen der abuser
+Logs: Alle logs er lavet og burde virke (Ved ikke om der er fejl)
     Ticket Close: Lavet .
     Ticket Claim: Lavet .
     Ticket Unclaim: Lavet .

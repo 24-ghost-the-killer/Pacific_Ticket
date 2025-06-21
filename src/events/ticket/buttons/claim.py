@@ -2,6 +2,7 @@ import discord
 from src.events.ticket.buttons.unclaim import TicketUnclaim as Unclaim
 from src.utils.ticket.database import TicketDatabase as Database
 from src.database.functions.settings import DatabaseSettings as Settings
+from src.utils.ticket.logging import Logging
 class TicketClaim(discord.ui.View):
     _category_cache = None
 
@@ -150,20 +151,24 @@ class TicketClaim(discord.ui.View):
                 'claimed': True,
                 'claimed_by': str(interaction.user.id),
             })
-
-        except discord.Forbidden:
+            await Logging().claim(interaction=interaction, data={ 'ticket': ticket })
+        except discord.Forbidden as e:
+            print(f"Forbidden: {e}")
             await interaction.response.send_message(
                 "Jeg har ikke tilladelse til at ændre tilladelserne for denne ticket. Kontakt venligst en administrator.",
                 ephemeral=True
             )
             return
         except discord.HTTPException as e:
+            print(f"HTTPException: {e}")
             await interaction.response.send_message(
                 f"Der opstod en fejl under ændring af tilladelserne: {e}",
                 ephemeral=True
             )
             return
         except Exception as e:
+            print(f"Exception: {e}")
+
             await interaction.response.send_message(
                 f"Der opstod en fejl under claim af ticketen: {str(e)}",
                 ephemeral=True

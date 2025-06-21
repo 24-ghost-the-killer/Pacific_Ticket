@@ -21,12 +21,14 @@ Admin Commands: Er ikke så vigtigt pt, men bliver lavet med tiden
 Dashboard: Der skal laves et dashboard i fremtiden i forhold til transcript, men faws prøver at lave lortet men går ikke så godt
 
 Logs: Alle logs skal laves inden botten bliver brugt for at sikrer at der ingen der abuser
-    Ticket Create: 
-    Ticket Close: 
-    Ticket Claim: 
-    Ticket Unclaim:
-    Ticket Indkald:
-    Ticket Switch:
-    Ticket Rename:
-    Ticket Owner:
-    Ticket Panel:
+    Ticket Close: Lavet .
+    Ticket Claim: Lavet .
+    Ticket Unclaim: Lavet .
+    Ticket Indkald: Lavet .
+    Ticket Switch: Lavet .
+    Ticket Rename: Lavet .
+    Ticket Owner: Lavet .
+    Ticket Panel: Lavet .
+    Ticket Remove: Lavet .
+    Ticket Add: Lavet .
+ 

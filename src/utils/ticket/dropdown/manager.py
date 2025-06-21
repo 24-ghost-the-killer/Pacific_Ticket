@@ -17,44 +17,65 @@ class SettingsDropdown(discord.ui.Select):
 )
 
     async def callback(self, interaction: discord.Interaction):
-        selected_option = next(
-            (setting for setting in self.settings if setting['value'] == self.values[0]),
-             None
-        )
+        try:
+            selected_option = next(
+                (setting for setting in self.settings if setting['value'] == self.values[0]),
+                None
+            )
 
-        if not selected_option:
+            if not selected_option:
+                await interaction.response.send_message(
+                    "Den valgte indstilling blev ikke fundet.",
+                    ephemeral=True
+                )
+                return
+
+            class TextInputModal(discord.ui.Modal):
+                def __init__(self, name, value):
+                    super().__init__(title="Ændr indstilling")
+                    self.label = name
+                    self.add_item(
+                        discord.ui.TextInput(
+                            label=name,
+                            default=value,
+                            placeholder="Indtast ny værdi her"
+                        )
+                    )
+
+                async def on_submit(self, interaction: discord.Interaction):
+                    new_value = self.children[0].value
+
+                    if Settings.get(self.label) == new_value:
+                        await interaction.response.send_message(
+                            f"Indstillingen `{self.label}` er allerede sat til: {new_value}",
+                            ephemeral=True
+                        )
+                        return
+
+                    Settings.update(self.label, new_value)
+                    await interaction.response.send_message(
+                        f"Indstillingen `{self.label}` er blevet opdateret til: {new_value}",
+                        ephemeral=True
+                    )
+            await interaction.response.send_modal(TextInputModal(selected_option['name'], selected_option['value']))
+        except discord.Forbidden as e:
+            print(f"Forbidden: {e}")
             await interaction.response.send_message(
-                "Den valgte indstilling blev ikke fundet.",
+                "Jeg har ikke tilladelse til at ændre denne indstilling. Kontakt venligst en administrator.",
                 ephemeral=True
             )
             return
-
-        class TextInputModal(discord.ui.Modal):
-            def __init__(self, name, value):
-                super().__init__(title="Ændr indstilling")
-                self.label = name
-                self.add_item(
-                    discord.ui.TextInput(
-                        label=name,
-                        default=value,
-                        placeholder="Indtast ny værdi her"
-                    )
-                )
-
-            async def on_submit(self, interaction: discord.Interaction):
-                new_value = self.children[0].value
-
-                if Settings.get(self.label) == new_value:
-                    await interaction.response.send_message(
-                        f"Indstillingen `{self.label}` er allerede sat til: {new_value}",
-                        ephemeral=True
-                    )
-                    return
-
-                Settings.update(self.label, new_value)
-                await interaction.response.send_message(
-                    f"Indstillingen `{self.label}` er blevet opdateret til: {new_value}",
-                    ephemeral=True
-                )
-
-        await interaction.response.send_modal(TextInputModal(selected_option['name'], selected_option['value']))
+        except discord.HTTPException as e:
+            print(f"HTTPException: {e}")
+            await interaction.response.send_message(
+                "Der opstod en fejl under behandlingen af din anmodning. Prøv venligst igen senere.",
+                ephemeral=True
+            )
+            return
+        except Exception as e:
+            print(f"Exception: {e}")
+            await interaction.response.send_message(
+                "Der opstod en fejl under behandlingen af din anmodning. Prøv venligst igen senere.",
+                ephemeral=True
+            )
+            return

@@ -3,8 +3,7 @@ from discord.ext import commands
 from src.utils.ticket.database import TicketDatabase as Database
 from src.database.functions.settings import DatabaseSettings as Settings
 from src.utils.permissions import Permission
-
-# Initialize category cache globally
+from src.utils.ticket.logging import Logging
 _category_cache = None
 if _category_cache is None:
     categories = Database().categorys() or []
@@ -27,58 +26,83 @@ class Switch(commands.Cog):
         ]
     )
     async def switch(self, interaction: discord.Interaction, category: discord.app_commands.Choice[str]):
-        access = Permission(interaction.user, Settings.get('support_role')).check()
-        if not access:
+        try:
+            access = Permission(interaction.user, Settings.get('support_role')).check()
+            if not access:
+                await interaction.response.send_message(
+                    "Du har ikke tilladelse til at bruge denne kommando.",
+                    ephemeral=True
+                )
+                return
+            
+            ticket = Database.get({'channel_id': str(interaction.channel.id)})
+            if not ticket:
+                await interaction.response.send_message(
+                    "Denne ticket findes ikke i databasen. Kontakt venligst en administrator.",
+                    ephemeral=True
+                )
+                return
+
+            old_category = _category_cache.get(ticket['category'])
+            selected_category = _category_cache.get(category.value)
+            if not selected_category:
+                await interaction.response.send_message(
+                    "Den valgte kategori findes ikke.",
+                    ephemeral=True
+                )
+                return
+            
+            newRole = interaction.guild.get_role(int(selected_category['role_access'])) if selected_category.get('role_access') else None
+            oldRole = interaction.guild.get_role(int(old_category['role_access'])) if old_category.get('role_access') else None
+
+            overwrites = interaction.channel.overwrites
+            if newRole:
+                overwrites[newRole] = discord.PermissionOverwrite(read_messages=True, send_messages=True)
+            if oldRole:
+                del overwrites[oldRole]
+
+            await interaction.channel.edit(category=interaction.guild.get_channel(int(selected_category['channel_category'])), overwrites=overwrites)
+
+            Database.update(interaction.channel.id,{
+                'category': category.value
+            })
+
             await interaction.response.send_message(
-                "Du har ikke tilladelse til at bruge denne kommando.",
+                embed=discord.Embed(
+                    title="Pacific - Ticket System",
+                    description=(
+                        f"**Ticket ID:** `{ticket['id']}`\n"
+                        f"**Kategori skiftet til:** {selected_category['name']}\n"
+                        f"**Skiftet af:** {interaction.user.mention}\n\n"
+                        "Hvis du har spørgsmål eller brug for hjælp, så opret en ticket her: <#{}>.".format(Settings.get('ticket_channel'))
+                    ),
+                    color=discord.Color.blue()
+                ).set_footer(
+                    text=f"Pacific • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
+                    icon_url=interaction.client.user.avatar.url if interaction.client.user.avatar else None
+                )
+            )
+
+            await Logging().switch(interaction=interaction, data={ 'category': category.value, 'ticket': ticket })
+        except discord.Forbidden as e:
+            print(f"Forbidden: {e}")
+            await interaction.response.send_message(
+                "Jeg har ikke tilladelse til at ændre kategorien for denne ticket. Kontakt venligst en administrator.",
                 ephemeral=True
             )
             return
-
-        ticket = Database.get({'channel_id': str(interaction.channel.id)})
-        if not ticket:
+        except discord.HTTPException as e:
+            print(f"HTTPException: {e}")
             await interaction.response.send_message(
-                "Denne ticket findes ikke i databasen. Kontakt venligst en administrator.",
+                f"Der opstod en fejl under skift af kategori: {str(e)}",
                 ephemeral=True
             )
             return
-
-        old_category = _category_cache.get(ticket['category'])
-        selected_category = _category_cache.get(category.value)
-        if not selected_category:
+        except Exception as e:
+            print(f"Exception: {e}")
             await interaction.response.send_message(
-                "Den valgte kategori findes ikke.",
+                "Der opstod en fejl under skift af kategori. Kontakt venligst en administrator.",
                 ephemeral=True
             )
             return
-        
-        newRole = interaction.guild.get_role(int(selected_category['role_access'])) if selected_category.get('role_access') else None
-        oldRole = interaction.guild.get_role(int(old_category['role_access'])) if old_category.get('role_access') else None
-
-        overwrites = interaction.channel.overwrites
-        if newRole:
-            overwrites[newRole] = discord.PermissionOverwrite(read_messages=True, send_messages=True)
-        if oldRole:
-            del overwrites[oldRole]
-
-        await interaction.channel.edit(category=interaction.guild.get_channel(int(selected_category['channel_category'])), overwrites=overwrites)
-
-        Database.update(interaction.channel.id,{
-            'category': category.value
-        })
-
-        await interaction.response.send_message(
-            embed=discord.Embed(
-                title="Pacific - Ticket System",
-                description=(
-                    f"**Ticket ID:** `{ticket['id']}`\n"
-                    f"**Kategori skiftet til:** {selected_category['name']}\n"
-                    f"**Skiftet af:** {interaction.user.mention}\n\n"
-                    "Hvis du har spørgsmål eller brug for hjælp, så opret en ticket her: <#{}>.".format(Settings.get('ticket_channel'))
-                ),
-                color=discord.Color.blue()
-            ).set_footer(
-                text=f"Pacific • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
-                icon_url=interaction.client.user.avatar.url if interaction.client.user.avatar else None
-            )
-        )
+            

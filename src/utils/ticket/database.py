@@ -1,6 +1,5 @@
 from src.database.main import Database
 from functools import lru_cache
-
 @lru_cache(maxsize=32)
 class TicketDatabase():
     @staticmethod
@@ -26,6 +25,15 @@ class TicketDatabase():
                         )
                     )
                     conn.commit()
+        except Database.IntegrityError as e:
+            print(f"Integrity error in TicketDatabase.create: {e}")
+            return None
+        except Database.OperationalError as e:
+            print(f"Operational error in TicketDatabase.create: {e}")
+            return None
+        except Database.DatabaseError as e:
+            print(f"Database error in TicketDatabase.create: {e}")
+            return None
         except Exception as e:
             print(f"Error in TicketDatabase.create: {e}")
             return None
@@ -44,6 +52,15 @@ class TicketDatabase():
                         )
                     )
                     return cursor.fetchone()
+        except Database.IntegrityError as e:
+            print(f"Integrity error in TicketDatabase.get: {e}")
+            return None
+        except Database.OperationalError as e:
+            print(f"Operational error in TicketDatabase.get: {e}")
+            return None
+        except Database.DatabaseError as e:
+            print(f"Database error in TicketDatabase.get: {e}")
+            return None
         except Exception as e:
             print(f"Error in TicketDatabase.get: {e}")
             return None
@@ -67,8 +84,17 @@ class TicketDatabase():
                     )
                     conn.commit()
                     return TicketDatabase.get({'channel_id': query})
+        except Database.IntegrityError as e:
+            print(f"Integrity error in TicketDatabase.update: {e}")
+            return None
+        except Database.OperationalError as e:
+            print(f"Operational error in TicketDatabase.update: {e}")
+            return None
+        except Database.DatabaseError as e:
+            print(f"Database error in TicketDatabase.update: {e}")
+            return None 
         except Exception as e:
-            print(f"Error in TicketDatabase.update: {e}")
+            print(f"Error in TicketDatabase.update: {e}")   
             return None
 
     @staticmethod
@@ -78,6 +104,15 @@ class TicketDatabase():
                 with conn.cursor(dictionary=True) as cursor:
                     cursor.execute("SELECT label, value, description, emote, role_access, channel_category FROM categorys")
                     return cursor.fetchall()
+        except Database.IntegrityError as e:
+            print(f"Integrity error in TicketDatabase.categorys: {e}")
+            return None
+        except Database.OperationalError as e:
+            print(f"Operational error in TicketDatabase.categorys: {e}")
+            return None
+        except Database.DatabaseError as e:
+            print(f"Database error in TicketDatabase.categorys: {e}")
+            return None
         except Exception as e:
             print(f"Error in TicketDatabase.categorys: {e}")
             return None
@@ -96,6 +131,15 @@ class TicketDatabase():
                         ) 
                     )
                     return cursor.fetchone()
+        except Database.IntegrityError as e:
+            print(f"Integrity error in TicketDatabase.category: {e}")
+            return None
+        except Database.OperationalError as e:
+            print(f"Operational error in TicketDatabase.category: {e}")
+            return None
+        except Database.DatabaseError as e:
+            print(f"Database error in TicketDatabase.category: {e}")
+            return None
         except Exception as e:
             print(f"Error in TicketDatabase.category: {e}")
             return None

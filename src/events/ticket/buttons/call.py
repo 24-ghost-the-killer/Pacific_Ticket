@@ -2,7 +2,6 @@ import discord
 from src.utils.ticket.model.call import Model
 from src.utils.ticket.database import TicketDatabase as Database
 from src.database.functions.settings import DatabaseSettings as Settings
-
 class TicketCall(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
@@ -27,41 +26,63 @@ class TicketCall(discord.ui.View):
 
     @discord.ui.button(label="Indkald", style=discord.ButtonStyle.red, emoji="📞", custom_id="ticket_call")
     async def indkald(self, interaction: discord.Interaction, button: discord.ui.Button):
-        self._load_settings(interaction.guild)
-        if self._call_support_enabled != 'true':
-            await interaction.response.send_message(
-                "Indkaldelse af support er ikke aktiveret. Kontakt venligst en administrator.",
-                ephemeral=True
-            )
-            return
-        if self._call_role_set is None:
-            await interaction.response.send_message(
-                "Der er ikke angivet en supportrolle. Kontakt venligst en administrator.",
-                ephemeral=True
-            )
-            return
-        if not self._support_role:
-            await interaction.response.send_message(
-                "Supportrollen blev ikke fundet. Kontakt venligst en administrator.",
-                ephemeral=True
-            )
-            return
-        if self._support_role not in interaction.user.roles:
-            await interaction.response.send_message(
-                "Du er ikke staff og kan derfor ikke indkalde personen i support.",
-                ephemeral=True
-            )
-            return
+        try:
+            self._load_settings(interaction.guild)
+            if self._call_support_enabled != 'true':
+                await interaction.response.send_message(
+                    "Indkaldelse af support er ikke aktiveret. Kontakt venligst en administrator.",
+                    ephemeral=True
+                )
+                return
+            if self._call_role_set is None:
+                await interaction.response.send_message(
+                    "Der er ikke angivet en supportrolle. Kontakt venligst en administrator.",
+                    ephemeral=True
+                )
+                return
+            if not self._support_role:
+                await interaction.response.send_message(
+                    "Supportrollen blev ikke fundet. Kontakt venligst en administrator.",
+                    ephemeral=True
+                )
+                return
+            if self._support_role not in interaction.user.roles:
+                await interaction.response.send_message(
+                    "Du er ikke staff og kan derfor ikke indkalde personen i support.",
+                    ephemeral=True
+                )
+                return
 
-        ticket = Database().get({
-            'channel_id': str(interaction.channel.id)
-        })
-        
-        if not ticket:
+            ticket = Database().get({
+                'channel_id': str(interaction.channel.id)
+            })
+            
+            if not ticket:
+                await interaction.response.send_message(
+                    "Denne ticket findes ikke i databasen. Kontakt venligst en administrator.",
+                    ephemeral=True
+                )
+                return
+            
+            await interaction.response.send_modal(Model())
+        except discord.Forbidden as e:
+            print(f"Forbidden: {e}")
             await interaction.response.send_message(
-                "Denne ticket findes ikke i databasen. Kontakt venligst en administrator.",
+                "Jeg har ikke tilladelse til at indkalde support. Kontakt venligst en administrator.",
                 ephemeral=True
             )
             return
-        
-        await interaction.response.send_modal(Model())
+        except discord.HTTPException as e:
+            print(f"HTTPException: {e}")
+            await interaction.response.send_message(
+                "Der opstod en fejl under behandlingen af din anmodning. Prøv venligst igen senere.",
+                ephemeral=True
+            )
+            return
+        except Exception as e:
+            print(f"Exception: {e}")
+            await interaction.response.send_message(
+                "Der opstod en fejl under behandlingen af din anmodning. Prøv venligst igen senere.",
+                ephemeral=True
+            )
+            return

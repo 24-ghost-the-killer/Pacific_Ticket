@@ -1,5 +1,4 @@
 from src.database.main import Database
-
 class DatabaseSettings:
     @staticmethod
     def get(name):

@@ -64,6 +64,13 @@ class TicketCall(discord.ui.View):
                 )
                 return
             
+            if not ticket['claimed_by'] == str(interaction.user.id):
+                await interaction.response.send_message(
+                    "Du kan ikke indkalde ejeren af ticketen til support, da du ikke er den, der har taget ticketen.",
+                    ephemeral=True
+                )
+                return
+            
             await interaction.response.send_modal(Model())
         except discord.Forbidden as e:
             print(f"Forbidden: {e}")

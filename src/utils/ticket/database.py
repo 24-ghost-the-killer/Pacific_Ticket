@@ -37,7 +37,32 @@ class TicketDatabase():
         except Exception as e:
             print(f"Error in TicketDatabase.create: {e}")
             return None
-
+        
+    @staticmethod
+    def statistics():
+        try:
+            with Database.connect() as conn:
+                with conn.cursor(dictionary=True) as cursor:
+                    cursor.execute("SELECT COUNT(*) as opened FROM tickets WHERE open = %s", ("1",))
+                    opened = cursor.fetchone()["opened"]
+                    cursor.execute("SELECT COUNT(*) as total FROM tickets")
+                    total = cursor.fetchone()["total"]
+                    return {
+                        'total': total,
+                        'opened': opened
+                    }
+        except Database.IntegrityError as e:
+            print(f"Integrity error in TicketDatabase.statistics: {e}")
+            return None
+        except Database.OperationalError as e:
+            print(f"Operational error in TicketDatabase.statistics: {e}")
+            return None
+        except Database.DatabaseError as e:
+            print(f"Database error in TicketDatabase.statistics: {e}")
+            return None
+        except Exception as e:
+            print(f"Error in TicketDatabase.statistics: {e}")
+            return None
     @staticmethod
     def get(data={
         'channel_id': None

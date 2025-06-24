@@ -21,17 +21,29 @@ class Model(discord.ui.Modal, title="Lukning af Ticket"):
             
             owner = interaction.guild.get_member(int(ticket['owner_id']))
             if not owner or not isinstance(owner, discord.Member):
-                await interaction.response.send_message(
-                    "Ejeren af ticketen blev ikke fundet eller er ugyldig. Kontakt venligst en administrator.",
-                    ephemeral=True
-                )
+                if not interaction.response.is_done():
+                    await interaction.response.send_message(
+                        "Ejeren af ticketen blev ikke fundet eller er ugyldig. Kontakt venligst en administrator.",
+                        ephemeral=True
+                    )
+                else:
+                    await interaction.followup.send(
+                        "Ejeren af ticketen blev ikke fundet eller er ugyldig. Kontakt venligst en administrator.",
+                        ephemeral=True
+                    )
                 return
             
             if not ticket['open']:
-                await interaction.response.send_message(
-                    "Denne ticket er allerede lukket.",
-                    ephemeral=True
-                )
+                if not interaction.response.is_done():
+                    await interaction.response.send_message(
+                        "Denne ticket er allerede lukket.",
+                        ephemeral=True
+                    )
+                else:
+                    await interaction.followup.send(
+                        "Denne ticket er allerede lukket.",
+                        ephemeral=True
+                    )
                 return
             
             category = Database.category({ 'value': ticket['category'] })
@@ -43,22 +55,40 @@ class Model(discord.ui.Modal, title="Lukning af Ticket"):
 
             await interaction.channel.edit(overwrites=overwrites, reason=f"Ticket lukket af {interaction.user} ({interaction.user.id})")
 
-            await interaction.response.send_message(
-                embed=discord.Embed(
-                    title="Pacific - Ticket Lukket",
-                    description=(
-                        f"Din ticket på pacific er ved at blive lukket.\n"
-                        f"Du kan ikke længere sende beskeder i denne ticket.\n\n"
-                        f"**Ticket ID:** `{ticket['id']}`\n"
-                        f"**Lukket af:** {interaction.user.mention}\n"
-                        f"> {self.reason.value}"
-                    ),
-                    color=discord.Color.blue(),
-                ).set_footer(
-                    text=f"Pacific • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
-                    icon_url=interaction.client.user.avatar.url if interaction.client.user.avatar else None
+            if not interaction.response.is_done():
+                await interaction.response.send_message(
+                    embed=discord.Embed(
+                        title="Pacific - Ticket Lukket",
+                        description=(
+                            f"Din ticket på pacific er ved at blive lukket.\n"
+                            f"Du kan ikke længere sende beskeder i denne ticket.\n\n"
+                            f"**Ticket ID:** `{ticket['id']}`\n"
+                            f"**Lukket af:** {interaction.user.mention}\n"
+                            f"> {self.reason.value}"
+                        ),
+                        color=discord.Color.blue(),
+                    ).set_footer(
+                        text=f"Pacific • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
+                        icon_url=interaction.client.user.avatar.url if interaction.client.user.avatar else None
+                    )
                 )
-            )
+            else:
+                await interaction.followup.send(
+                    embed=discord.Embed(
+                        title="Pacific - Ticket Lukket",
+                        description=(
+                            f"Din ticket på pacific er ved at blive lukket.\n"
+                            f"Du kan ikke længere sende beskeder i denne ticket.\n\n"
+                            f"**Ticket ID:** `{ticket['id']}`\n"
+                            f"**Lukket af:** {interaction.user.mention}\n"
+                            f"> {self.reason.value}"
+                        ),
+                        color=discord.Color.blue(),
+                    ).set_footer(
+                        text=f"Pacific • Ticket System • {interaction.created_at.strftime('%d-%m-%Y %H:%M')}",
+                        icon_url=interaction.client.user.avatar.url if interaction.client.user.avatar else None
+                    )
+                )
 
             Database.update(interaction.channel.id, {
                 'open': False,
@@ -90,43 +120,79 @@ class Model(discord.ui.Modal, title="Lukning af Ticket"):
                 await owner.send(embed=embed)
             except discord.Forbidden as e:
                 print(f"Forbidden: {e}")
-                await interaction.followup.send(
-                    "Jeg kunne ikke sende en besked til ejeren af ticketen. Sørg for, at de har direkte beskeder aktiveret.",
-                    ephemeral=True
-                )
+                if not interaction.response.is_done():
+                    await interaction.response.send_message(
+                        "Jeg kunne ikke sende en besked til ejeren af ticketen. Sørg for, at de har direkte beskeder aktiveret.",
+                        ephemeral=True
+                    )
+                else:
+                    await interaction.followup.send(
+                        "Jeg kunne ikke sende en besked til ejeren af ticketen. Sørg for, at de har direkte beskeder aktiveret.",
+                        ephemeral=True
+                    )
                 return
             except discord.HTTPException as e:
                 print(f"HTTPException: {e}")
-                await interaction.followup.send(
-                    f"Der opstod en fejl under afsendelse af beskeden: {str(e)}",
-                    ephemeral=True
-                )
+                if not interaction.response.is_done():
+                    await interaction.response.send_message(
+                        f"Der opstod en fejl under afsendelse af beskeden: {str(e)}",
+                        ephemeral=True
+                    )
+                else:
+                    await interaction.followup.send(
+                        f"Der opstod en fejl under afsendelse af beskeden: {str(e)}",
+                        ephemeral=True
+                    )
                 return
             except Exception as e:
                 print(f"Exception: {e}")
-                await interaction.followup.send(
-                    f"Der opstod en fejl under afsendelse af beskeden: {e}",
-                    ephemeral=True
-                )
+                if not interaction.response.is_done():
+                    await interaction.response.send_message(
+                        f"Der opstod en fejl under afsendelse af beskeden: {e}",
+                        ephemeral=True
+                    )
+                else:
+                    await interaction.followup.send(
+                        f"Der opstod en fejl under afsendelse af beskeden: {e}",
+                        ephemeral=True
+                    )
                 return
         except discord.Forbidden as e:
             print(f"Forbidden: {e}")
-            await interaction.response.send_message(
-                "Jeg har ikke tilladelse til at lukke denne ticket. Kontakt venligst en administrator.",
-                ephemeral=True
-            )
+            if not interaction.response.is_done():
+                await interaction.response.send_message(
+                    "Jeg har ikke tilladelse til at lukke denne ticket. Kontakt venligst en administrator.",
+                    ephemeral=True
+                )
+            else:
+                await interaction.followup.send(
+                    "Jeg har ikke tilladelse til at lukke denne ticket. Kontakt venligst en administrator.",
+                    ephemeral=True
+                )
             return
         except discord.HTTPException as e:
             print(f"HTTPException: {e}")
-            await interaction.response.send_message(
-                f"Der opstod en fejl under lukning af ticketen: {str(e)}",
-                ephemeral=True
-            )
+            if not interaction.response.is_done():
+                await interaction.response.send_message(
+                    f"Der opstod en fejl under lukning af ticketen: {str(e)}",
+                    ephemeral=True
+                )
+            else:
+                await interaction.followup.send(
+                    f"Der opstod en fejl under lukning af ticketen: {str(e)}",
+                    ephemeral=True
+                )
             return
         except Exception as e:
             print(f"Exception: {e}")
-            await interaction.response.send_message(
-                "Der opstod en fejl under lukning af ticketen. Prøv venligst igen.",
-                ephemeral=True
-            )
+            if not interaction.response.is_done():
+                await interaction.response.send_message(
+                    "Der opstod en fejl under lukning af ticketen. Prøv venligst igen.",
+                    ephemeral=True
+                )
+            else:
+                await interaction.followup.send(
+                    "Der opstod en fejl under lukning af ticketen. Prøv venligst igen.",
+                    ephemeral=True
+                )
             return

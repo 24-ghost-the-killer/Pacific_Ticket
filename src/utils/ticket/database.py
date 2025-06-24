@@ -63,6 +63,7 @@ class TicketDatabase():
         except Exception as e:
             print(f"Error in TicketDatabase.statistics: {e}")
             return None
+        
     @staticmethod
     def get(data={
         'channel_id': None

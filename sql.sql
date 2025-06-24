@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `value` varchar(50) DEFAULT NULL,
   `disabled` int(11) DEFAULT 0,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 REPLACE INTO `settings` (`id`, `name`, `value`, `disabled`) VALUES
 	(1, 'support_role', '1376312327514619995', 0),
@@ -41,7 +41,8 @@ REPLACE INTO `settings` (`id`, `name`, `value`, `disabled`) VALUES
 	(4, 'close_time', '5', 0),
 	(5, 'panel_role', '1376311994147147846', 0),
 	(6, 'ticket_channel', '1376288663545188364', 0),
-	(7, 'logging_channel', '1385586289340059729', 0);
+	(7, 'logging_channel', '1385586289340059729', 0),
+	(8, 'support_channel', '1377058139928793088', 0);
 
 CREATE TABLE IF NOT EXISTS `tickets` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -57,4 +58,4 @@ CREATE TABLE IF NOT EXISTS `tickets` (
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

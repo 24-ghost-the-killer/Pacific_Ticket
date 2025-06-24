@@ -72,24 +72,16 @@ class TicketCall(discord.ui.View):
                 return
             
             await interaction.response.send_modal(Model())
-        except discord.Forbidden as e:
-            print(f"Forbidden: {e}")
-            await interaction.response.send_message(
-                "Jeg har ikke tilladelse til at indkalde support. Kontakt venligst en administrator.",
-                ephemeral=True
-            )
-            return
-        except discord.HTTPException as e:
-            print(f"HTTPException: {e}")
-            await interaction.response.send_message(
-                "Der opstod en fejl under behandlingen af din anmodning. Prøv venligst igen senere.",
-                ephemeral=True
-            )
-            return
         except Exception as e:
             print(f"Exception: {e}")
-            await interaction.response.send_message(
-                "Der opstod en fejl under behandlingen af din anmodning. Prøv venligst igen senere.",
-                ephemeral=True
-            )
+            if interaction.response.is_done():
+                await interaction.followup.send(
+                    "Der opstod en fejl under behandlingen af din anmodning. Prøv venligst igen senere.",
+                    ephemeral=True
+                )
+            else:
+                await interaction.response.send_message(
+                    "Der opstod en fejl under behandlingen af din anmodning. Prøv venligst igen senere.",
+                    ephemeral=True
+                )
             return
